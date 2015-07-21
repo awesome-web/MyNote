@@ -38,6 +38,8 @@ function addContent (title,content) {
 
 function displayContent () {
 	// body...
+	var tx = db.transaction(TABLE_NAME,'readonly');
+	var store = tx.objectStore(TABLE_NAME);
 }
 
 document.getElementById('submit').addEventListener('click',function (evt){
