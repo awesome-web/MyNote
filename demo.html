@@ -7,38 +7,53 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-	<div id="tag">
-		<p id="tag-title" class="title">笔记本</h1>
-		<ul id="tag-list">
-			<li><a href="#">Alice</a></li>
-			<li><a href="#">Bob</a></li>
-			<li><a href="#">Cindy</a></li>
-			<li><a href="#">David</a></li>
-		</ul>
-	</div>
-	<div id="note">
-		<div id="note-tag" class="title">
-			<p>Alice</p>
+	<div class="grid">
+		<div class="row title">
+			<p id="tag-title" class="col-1 tag">Notebook</h1>
+			<p id="note-tag" class="col-2 note-list">Alice</p>
+			<p id="note-name" class="col-3">Hello</p>
 		</div>
-		<ul id="note-list">
-			<li>
-				<h3>Hello</h3>
-				<a href="#">Hello,world!</a>
-			</li>
-			<li>
-				<h3>Bye</h3>
-				<a href="#">Goodbye</a>
-			</li>
-			<li>
-				<h3>Yoho</h3>
-				<a href="#">Yoho</a>
-			</li>
-			<li>
-				<h3>Hi</h3>
-				<a href="#">Hi</a>
-			</li>
-		</ul>
+		<div class="row">
+			<div class="col-1 tag">
+				<ul id="tag-list">
+					<li><a href="#">Alice</a></li>
+					<li><a href="#">Bob</a></li>
+					<li><a href="#">Cindy</a></li>
+					<li><a href="#">David</a></li>
+				</ul>
+			</div>
+			<div class="col-2 note-list">
+				<ul id="note-list">
+					<li>
+						<a href="#">
+						<h3>Hello</h3>
+						Hello,world!
+						</a>
+					</li>
+					<li>
+						<a href="#">
+						<h3>Hello</h3>
+						Hello,world!
+						</a>
+					</li>
+					<li>
+						<a href="#">
+						<h3>Hello</h3>
+						Hello,world!
+						</a>
+					</li>
+					<li>
+						<a href="#">
+						<h3>Hello</h3>
+						Hello,world!
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div class="col-3">
+				<p id="note-content">Hello,world!</p>
+			</div>
+		</div>
 	</div>
-	<div id="note-content"></div>
 </body>
 </html>

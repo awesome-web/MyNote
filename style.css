@@ -1,7 +1,18 @@
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
 *{
 	margin: 0px;
 	padding: 0px;
 	font-family: sans-serif;
+}
+
+ul{
+	list-style: none;
 }
 
 a{
@@ -9,32 +20,47 @@ a{
 	display: block;
 }
 
+.grid {
+	height: 100%;
+    width: 100%;
+}
+
+.row {
+    width: 100%;
+    display: flex;
+}
+
+.col-1{
+	width:16.66%;
+}
+
+.col-2{
+	width:33.33%;
+}
+
+.col-3{
+	width: 50%;
+}
+
 .title{
-	display: block;
-	padding: 70px 0px 90px 0px;
+	height:200px;
+	line-height: 200px;
 	font-size:40px;
 }
 
-#tag{
+.tag{
 	background-color: black;
 	color: gray;
-	width: 15%;
-	height: 768px;
-	float: left;
 	border-right: 10px #ebebeb solid;
 }
+
 
 #tag-title{
 	text-align: center;
 }
 
-ul{
-	list-style: none;
-}
-
 #tag-list{
 	font-size: 20px;
-	height: 60%;
 }
 
 #tag-list li a{
@@ -43,18 +69,38 @@ ul{
 	line-height: 40px;
 }
 
-#tag-list li a:link    {color:gray;}
-#tag-list li a:visited {color:gray;}
+#tag-list li a:link{
+	color:gray;
+}
+
+#tag-list li a:visited{
+	color:gray;
+}
+
 #tag-list li a:hover{
 	color:white;
 	background-color: gray;
 }
-#tag-list li a:active  {color:yellow;}
 
-#note{
-	margin-left: 17%;
-	width: 35%;
-	height:768px;
+#tag-list li a:active{
+	color:yellow;
+}
+
+#tag-footer{
+	min-height:300px;
+}
+
+.note-list{
+	border-right: 10px #ebebeb solid;
+}
+
+#note-tag{
+	text-indent: 20px;
+}
+
+#note-list{
+	padding: 0px 10px;
+	height:600px;
 }
 
 #note-list li{
@@ -62,12 +108,39 @@ ul{
 }
 
 #note-list li h3{
-	margin:0px 0px 5px 0px;
+	margin-bottom:5px;
 }
+
 #note-list li a{
 	height:60px;
 	margin-bottom: 5px;
 	color:black;
+}
+
+#note-list li a:link{
+	color:black;
+}
+
+#note-list li a:visited{
+	color:black;
+}
+
+#note-list li a:hover{
+	border: 1px #33ffff solid;
+	background-color: white;
+}
+
+#tag-footer{
+	height:100px;
+}
+
+#note-name{
+	background-color: orange;
+	text-indent: 30px;
+}
+
+#note-content{
+	padding: 20px 20px;
 }
 
 
