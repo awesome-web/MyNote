@@ -9,15 +9,24 @@
 <body>
 	<div class="grid">
 		<div class="row title">
-			<p id="tag-title" class="col-1 tag">Notebook</h1>
-			<p id="note-tag" class="col-2 note-list"></p>
-			<p id="note-name" class="col-3"></p>
+			<div id="tag-title" class="col-1 tag">Notebook</div>
+			<div class="col-1" id="note-tag"></div>
+			<div class="col-1 note-list">
+				<a href="#" id="new-note" class="button">New</a>
+			</div>
+			<div id="note-name" class="col-2 note-name">	
+			</div>
+			<div class="col-1 note-name" id="edit-button">
+			</div>
 		</div>
 		<div class="row">
 			<div class="col-1 tag">
 				<ul id="tag-list">
+				<li class="active">
 					
+				</li>
 				</ul>
+				<a href="#" id="add-tag" class="button">New</a>
 			</div>
 			<div class="col-2 note-list">
 				<ul id="note-list">

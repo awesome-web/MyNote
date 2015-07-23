@@ -30,7 +30,10 @@
 
 		},
 		getNotes : function(){
-			return this.notes[model.current_tag];
+			if(this.current_tag)
+				return this.notes[this.current_tag];
+			else
+				return null;
 		},
 		getTags : function(){
 			return this.tags;
@@ -47,8 +50,14 @@
 		addTag : function(){
 
 		},
-		removeTag : function(){
-
+		removeTag : function(tag){
+			if(tag == this.current_tag)
+				var c = true;
+			this.tags.splice(this.tags.indexOf(tag),1);
+			if(c)
+				if(this.tags)
+					this.current_tag = this.tags[0];
+			console.debug(this.current_tag);
 		},
 		updateTag : function(){
 
@@ -91,41 +100,49 @@
 		},
 		setCurrentNote : function(note){
 			model.setCurrentNote(note);
+		},
+		removeTag : function(tag){
+			model.removeTag(tag);
 		}
 	};
 
 	var TagListView = {
 		init : function(){
 			this.tagList = document.getElementById('tag-list');
+			if(controller.getTags())
+				controller.setCurrentTag(controller.getTags()[0]);
 			this.render();
 		},
 		render : function(){
 			var tags = controller.getTags();
 			this.tagList.innerHTML = "";
-			var elem;
+			if(tags){
+				var elem;
 
-			for(var i = 0;i < tags.length;i++){
-				elem = document.createElement('li');
-				elem.innerHTML = '<a href="#">'+tags[i]+'</a>';
-				elem.addEventListener('click',(function(tagCopy) {
-		            return function() {
-		                controller.setCurrentTag(tagCopy);
-						NoteListView.render();
-						controller.setCurrentNote(null);
-						NoteContentView.render();
-		            };
-		        })(tags[i]));
-
-				// elem.addEventListener('click',function(evt){
-				// 	var tags = TagListView.tagList.childNodes;
-				// 	for(var i = 0;i < tags.length;i++){
-				// 		tags[i].firstChild.style['background-color'] = 'black';
-				// 		tags[i].firstChild.style.color = 'gray';
-				// 	}
-				// 	evt.target.style['background-color'] = 'gray';
-				// 	evt.target.style.color = 'white';	
-				// });
-				this.tagList.appendChild(elem);
+				for(var i = 0;i < tags.length;i++){
+					elem = document.createElement('li');
+					elem.innerHTML = '<div class="row"><div class="col-4"><a href="#" class="tag-name">'
+					+tags[i]
+					+'</a></div><div class="col-1"><a href="#" class="edit-tag button">T</a></div><div class="col-1"><a href="#" class="delete-tag button">X</a></div></div>';
+					if(tags[i] == controller.getCurrentTag())
+						elem.className = "active";
+					elem.addEventListener('click',(function(tagCopy) {
+			            return function() {
+			                controller.setCurrentTag(tagCopy);
+			                TagListView.render();
+							NoteListView.render();
+							controller.setCurrentNote(null);
+							NoteContentView.render();
+			            };
+			        })(tags[i]));
+			        elem.firstChild.lastChild.firstChild.addEventListener('click',(function(tagCopy){
+			        	return function(){
+			        		controller.removeTag(tagCopy);
+			        		TagListView.render();
+			        	}
+			        })(tags[i]));
+					this.tagList.appendChild(elem);
+				}
 			}
 		}
 	};
@@ -145,21 +162,15 @@
 				for(var i = 0;i < notes.length;i++){
 					elem = document.createElement('li');
 					elem.innerHTML = '<a href="#"><h3>'+notes[i].name+'</h3>'+notes[i].content+'</a>';
+					if(notes[i] == controller.getCurrentNote())
+						elem.className = "active";
 					elem.addEventListener('click',(function(noteCopy) {
 		                return function() {
 		                    controller.setCurrentNote(noteCopy);
+		                    NoteListView.render();
 		                    NoteContentView.render();
 		                };
 		            })(notes[i]));
-		   //          elem.addEventListener('click',function(evt){
-					// var notes = NoteListView.noteList.childNodes;
-					// for(var i = 0;i < notes.length;i++){
-					// 	notes[i].style['background-color'] = '#ebebeb';
-					// 	notes[i].style.border = 'none';
-					// }
-					// evt.target.style['background-color'] = 'white';
-					// evt.target.style.border = '1px #33eeff solid';
-					// });
 					this.noteList.appendChild(elem);
 				}
 			}
@@ -170,6 +181,7 @@
 		init : function(){
 			this.noteContent = document.getElementById('note-content');
 			this.noteName = document.getElementById('note-name');
+			this.editButton = document.getElementById('edit-button');
 			this.render();
 		},
 		render : function(){
@@ -177,17 +189,26 @@
 			if(note){
 				this.noteName.innerHTML = note.name;
 				this.noteContent.innerHTML = note.content;
+				this.editButton.innerHTML = '<a href="#" id="edit-note" class="button">Edit</a>';
+				document.getElementById('edit-note').addEventListener('click',function(){
+					NoteEditView.init();
+				});
 			}
 			else{
-				this.noteName.innerHTML = "";
-				this.noteContent.innerHTML = "";
+				this.clear();
 			}
+		},
+		clear : function(){
+			this.noteName.innerHTML = "";
+			this.noteContent.innerHTML = "";
+			this.editButton.innerHTML ="";
 		}
 	};
 
 	var NoteEditView = {
 		init : function(){
-
+			NoteContentView.clear();
+			this.noteContent = document.getElementById('note-content');
 		},
 		render : function(){
 

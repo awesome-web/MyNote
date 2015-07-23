@@ -27,6 +27,7 @@ a{
 
 .row {
     width: 100%;
+    display: -webkit-flex;
     display: flex;
 }
 
@@ -42,10 +43,35 @@ a{
 	width: 50%;
 }
 
+.col-4{
+	width:66.66%;
+}
+
+.col-5{
+	width:83.33%;
+}
+
+.col-6{
+	width: 100%;
+}
+
 .title{
 	height:200px;
 	line-height: 200px;
 	font-size:40px;
+}
+
+.button{
+	width: 80px;
+	height: 40px;
+	line-height: 40px;
+	color: white;
+	margin: 40% 0px 0px 40%;
+	font-size: 20px;
+	font-weight: bolder;
+	text-align: center;
+	background-color: #1e90ff;
+	border-radius: 5px;
 }
 
 .tag{
@@ -54,57 +80,71 @@ a{
 	border-right: 10px #ebebeb solid;
 }
 
-
 #tag-title{
 	text-align: center;
 }
 
 #tag-list{
-	font-size: 20px;
+	font-size: 22px;
 }
 
 #tag-list li a{
 	height:40px;
 	text-indent: 15%;
 	line-height: 40px;
+	color: gray;
+	margin-bottom: 5px;
 }
 
-#tag-list li a:link{
-	color:gray;
-}
-
-#tag-list li a:visited{
-	color:gray;
-}
-
-#tag-list li a:hover{
-	color:white;
+.tag .active .tag-name{
+	color: white !important;
 	background-color: gray;
 }
 
-#tag-list li a:active{
-	color:yellow;
+#add-tag{
+	margin-top: 20px;
+	text-align: center;
+	width: 50%;
 }
 
-#tag-footer{
-	min-height:300px;
+.delete-tag,.edit-tag{
+	text-indent: 0px !important;
+	text-align: center;
+	margin: 0px;
+	background-color: #ee5c42;
+	width: 100%;
+	color:black !important;
+}
+
+.edit-tag{
+	background-color: #AEEEEE;
 }
 
 .note-list{
 	border-right: 10px #ebebeb solid;
 }
 
+.note-list .active{
+	border: 1px #1e90ff solid;
+	background-color: white !important;
+}
+
 #note-tag{
 	text-indent: 20px;
+	color:gray;
 }
+
+
 
 #note-list{
 	padding: 0px 10px;
-	height:600px;
+	min-height:600px;
 }
 
 #note-list li{
 	background-color: #ebebeb;
+	margin-bottom: 10px;
+	padding: 5px;
 }
 
 #note-list li h3{
@@ -113,34 +153,30 @@ a{
 
 #note-list li a{
 	height:60px;
-	margin-bottom: 5px;
 	color:black;
 }
 
-#note-list li a:link{
-	color:black;
-}
-
-#note-list li a:visited{
-	color:black;
-}
-
-#note-list li a:hover{
-	border: 1px #33ffff solid;
-	background-color: white;
-}
-
-#tag-footer{
-	height:100px;
+.note-name{
+	background-color: #EE6363;
+	color: white;
+	display: none;
 }
 
 #note-name{
-	background-color: orange;
 	text-indent: 30px;
+	display: none;
+}
+
+#edit-note{
+	display: none;
+	background-color: #AEEEEE;
+	color: black;
 }
 
 #note-content{
 	padding: 20px 20px;
 }
+
+
 
 
