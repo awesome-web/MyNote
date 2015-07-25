@@ -5,35 +5,30 @@
 		current_note : null,
 		is_current_tag : false,
 		is_current_note : false,
-		notes : {
-			"Alice" : [
-			{
-				name : "Hello",
-				content : "The Object constructor creates an object wrapper for the given value. If the value is null or undefined, it will create and return an empty object, otherwise, it will return an object of a Type that corresponds to the given value. If the value is an object already, it will return the value.When called in a non-constructor context, Object behaves identically to new Object()."
-			},
-			{
-				name : "Hi",
-				content : "Hi,world"
-			}
-			],
-			"Bob" : [
-			{
-				name : "Bye",
-				content : "Bye,world"
-			},
-			{
-				name : "Goodbye",
-				content : "Goodbye,world"
-			}
-			],
-			"Cindy" : [],
-			"David" : []
-		},
+		notes : {},
 		tags : [],
 		init : function(){
-			Object.keys(this.notes).forEach(function(tag){
+			if (!localStorage.notes) {
+                localStorage.notes = JSON.stringify({
+                	"Example" : [
+                	{
+                		name : "Example",
+                		content : "Example"
+                	}
+                	] 
+                });
+            }
+            this.readData();
+            console.debug(JSON.parse(localStorage.notes));
+			Object.keys(JSON.parse(localStorage.notes)).forEach(function(tag){
 				model.tags.push(tag);
 			});
+		},
+		readData : function(){
+			this.notes = JSON.parse(localStorage.notes);
+		},
+		writeData : function(){
+			localStorage.notes = JSON.stringify(this.notes);
 		},
 		getNotes : function(){
 			if(this.current_tag)
@@ -44,8 +39,14 @@
 		getTags : function(){
 			return this.tags;
 		},
-		addNote : function(){
-
+		addNote : function(name,content){
+			var note = {
+				name : name,
+				content : content
+			};
+			this.notes[this.current_tag].push(note);
+			this.writeData();
+			this.setCurrentNote(note);
 		},
 		removeNote : function(note){
 			this.isCurrentNote(note);
@@ -53,9 +54,12 @@
 			arr.splice(arr.indexOf(note),1);
 			if(this.is_current_note)
 				this.current_note = null;
+			this.writeData();
 		},
-		updateNote : function(){
-
+		updateNote : function(name,content){
+			this.current_note.name = name;
+			this.current_note.content = content;
+			this.writeData();
 		},
 		addTag : function(tag){
 			if(this.notes[tag])
@@ -64,6 +68,7 @@
 				this.tags.push(tag);
 				this.notes[tag] = [];
 			}
+			this.writeData();
 		},
 		removeTag : function(tag){
 			this.isCurrentTag(tag);
@@ -71,9 +76,13 @@
 			delete this.notes[tag];
 			if(this.is_current_tag && this.tags)
 				this.current_tag = this.tags[0];
+			this.writeData();
 		},
 		updateTag : function(tag,value){
-			if(tag == value){
+			if(!value){
+				alert("Can't be empty!")
+			}
+			else if(tag == value){
 				return;
 			}
 			else if(this.notes[value]){
@@ -87,6 +96,7 @@
 				if(this.is_current_tag)
 					this.setCurrentTag(value);
 			}
+			this.writeData();
 		},
 		getCurrentTag : function(){
 			return this.current_tag;
@@ -144,6 +154,12 @@
 		},
 		addTag : function(tag){
 			model.addTag(tag);
+		},
+		addNote : function(name,content){
+			model.addNote(name,content);
+		},
+		updateNote : function(name,content){
+			model.updateNote(name,content);
 		}
 	};
 
@@ -162,7 +178,9 @@
 					this.newTag(tags[i]);
 				}
 			}
-			var add_tag = function(){
+			
+			document.getElementById('add-tag').onclick = function(){
+				this.onclick = 'null';
 				var elem = TagListView.newTag('');
 				elem.firstChild.firstChild.innerHTML = '<input type="text" id="edit-tag" required="required" autofocus="autofocus" onfocus="this.select()" />';
 				document.getElementById('edit-tag').addEventListener('keyup',function(e){
@@ -171,9 +189,7 @@
 						TagListView.render();
 					}
 				});
-				this.removeEventListener('click',add_tag);
 			};
-			document.getElementById('add-tag').addEventListener('click',add_tag);
 		},
 		newTag : function(tag){
 			var elem = document.createElement('li');
@@ -191,9 +207,13 @@
 					NoteContentView.render();
 	            };
 	        })(tag));
-	        elem.firstChild.firstChild.nextSibling.addEventListener('click',(function(tagCopy){
+	        elem.firstChild.firstChild.nextSibling.firstChild.onclick = (function(tagCopy){
 	        	return function(){
-        		this.previousSibling.innerHTML = '<input type="text" id="edit-tag" required="required" autofocus="autofocus" onfocus="this.select()" value="'+tagCopy+'"/>';
+	        		var edit_button = document.getElementsByClassName('edit-tag button');
+	        		console.debug(edit_button);
+	        		for(var i = 0;i < edit_button.length;i++)
+	        			edit_button[i].onclick = 'null';
+        		this.parentNode.previousSibling.innerHTML = '<input type="text" id="edit-tag" autofocus="autofocus" onfocus="this.select()" value="'+tagCopy+'"/>';
         		document.getElementById('edit-tag').addEventListener('keyup',(function(tagCopy){
         			return function(e){
         				if(e.keyCode == 13){
@@ -204,7 +224,7 @@
         			};
         		})(tagCopy));
         	};
-        })(tag));
+        })(tag);
 	        elem.firstChild.lastChild.addEventListener('click',(function(tagCopy){
 	        	return function(){
 	        		controller.removeTag(tagCopy);
@@ -221,48 +241,57 @@
 		init : function(){
 			this.tagName = document.getElementById('note-tag');
 			this.noteList = document.getElementById('note-list');
+			this.new_note = document.getElementById('new-note');
 			this.render();
 		},
 		render : function(){
-			var new_note = function(){
-				document.getElementById('new-note').removeEventListener('click',new_note);
+			this.new_note.onclick = function(){
+				this.onclick = "null";
 				NoteEditView.init();
+				NoteEditView.addNote();
 			};
-			document.getElementById('new-note').addEventListener('click',new_note);
+
 			var notes = controller.getNotes();
 			this.tagName.innerHTML = controller.getCurrentTag() || '';
 			this.noteList.innerHTML = "";
-			var elem;
+			if(!controller.getCurrentTag())
+				this.new_note.style.display = "none";
+			else
+				this.new_note.style.display = "block";
 			if(notes){	
 				for(var i = 0;i < notes.length;i++){
-					elem = document.createElement('li');
-					elem.innerHTML = '<div class="row"><h3 class="col-5">'
-					+notes[i].name
-					+'</h3>'
-					+'<div class="col-1"><a href="#" class="button delete-note">x</a></div></div>';
-					if(notes[i].content.length > 150)
-						elem.innerHTML += '<a href="#">'+notes[i].content.substring(0,150)+'...</a>';
-					else
-						elem.innerHTML += '<a href="#">'+notes[i].content+'</a>';
-					if(notes[i] == controller.getCurrentNote())
-						elem.className = "active";
-					elem.lastChild.addEventListener('click',(function(noteCopy) {
-		                return function() {
-		                    controller.setCurrentNote(noteCopy);
-		                    NoteListView.render();
-		                    NoteContentView.render();
-		                };
-		            })(notes[i]));
-		            elem.firstChild.lastChild.firstChild.addEventListener('click',(function(noteCopy){
-		            	return function(){
-		            		controller.removeNote(noteCopy);
-		            		NoteListView.render();
-		            		NoteContentView.render();
-		            	}
-		            })(notes[i]));
-					this.noteList.appendChild(elem);
+					this.newNote(notes[i]);		
 				}
 			}
+		},
+		newNote : function(note){
+			var elem = document.createElement('li');
+			elem.innerHTML = '<div class="row"><h3 class="col-5">'
+			+note.name
+			+'</h3>'
+			+'<div class="col-1"><a href="#" class="button delete-note">x</a></div></div>';
+			if(note.content.length > 100)
+				elem.innerHTML += '<a href="#">'+note.content.substring(0,80).replace(/[^A-Za-z0-9\ \,\;\.\?\u2E80-\uFE4F]/ig,"")+'...</a>';
+			else
+				elem.innerHTML += '<a href="#">'+note.content.replace(/[^A-Za-z0-9\ \,\;\.\?\u2E80-\uFE4F]/ig,"")+'</a>';
+			if(note == controller.getCurrentNote())
+				elem.className = "active";
+			elem.lastChild.addEventListener('click',(function(noteCopy) {
+                return function() {
+                    controller.setCurrentNote(noteCopy);
+                    NoteListView.render();
+                    NoteContentView.render();
+                };
+            })(note));
+            elem.firstChild.lastChild.firstChild.addEventListener('click',(function(noteCopy){
+            	return function(){
+            		controller.removeNote(noteCopy);
+            		NoteListView.render();
+            		NoteContentView.render();
+            	}
+            })(note));
+			this.noteList.appendChild(elem);
+			return elem;
 		}
 	};
 
@@ -274,13 +303,16 @@
 			this.render();
 		},
 		render : function(){
+			this.noteName.style['background-color'] = '#ee5c42';
+			this.editButton.style['background-color'] = '#ee5c42';
 			var note = controller.getCurrentNote();
 			if(note){
 				this.noteName.innerHTML = note.name;
-				this.noteContent.innerHTML = note.content;
+				this.noteContent.innerHTML = marked(note.content);
 				this.editButton.innerHTML = '<a href="#" id="edit-note" class="button">Edit</a>';
 				document.getElementById('edit-note').addEventListener('click',function(){
-					
+					NoteEditView.init();
+					NoteEditView.editNote();
 				});
 			}
 			else{
@@ -302,12 +334,43 @@
 			NoteContentView.editButton.innerHTML = '<div class="row"><div class="col-3"><a href="#" class="button" id="save-button">Save</a></div><div class="col-3"><a href="#" class="button" id="cancel-button">Cancel</a></div>';
 			NoteContentView.noteName.innerHTML = '<input type="text" placeholder="Title:" id="input-title"/>';
 			NoteContentView.noteContent.innerHTML = '<textarea id = "edit-area" spellcheck="false" placeholder="Content:"></textarea>';
+			this.input_title = document.getElementById('input-title');
+			this.save_button = document.getElementById('save-button');
+			this.cancel_button = document.getElementById('cancel-button');
 			this.edit_area = document.getElementById('edit-area');
-			this.edit_area.onpropertychange ="this.style.height=this.scrollHeight + 'px'";
-			this.edit_area.oninput="this.style.height=this.scrollHeight + 'px'";
+			this.edit_area.onpropertychange =function(){
+				this.style.height=this.scrollHeight + 'px';
+			}
+			this.edit_area.oninput=function(){
+				this.style.height=this.scrollHeight + 'px';
+			}
 		},
 		render : function(){
 			
+		},
+		addNote : function(){
+			this.save_button.onclick = function(){
+				controller.addNote(NoteEditView.input_title.value,NoteEditView.edit_area.value);
+				NoteListView.render();
+				NoteContentView.render();
+			};
+			this.cancel_button.onclick = function(){
+				NoteContentView.clear();
+				NoteListView.render();
+			}
+		},
+		editNote : function(){
+			var note = controller.getCurrentNote();
+			this.input_title.value = note.name;
+			this.edit_area.value = note.content;
+			this.save_button.onclick = function(){
+				controller.updateNote(NoteEditView.input_title.value,NoteEditView.edit_area.value);
+				NoteListView.render();
+				NoteContentView.render();
+			};
+			this.cancel_button.onclick = function(){
+				NoteContentView.render();
+			};
 		}
 	};
 
